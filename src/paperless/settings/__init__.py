@@ -989,6 +989,16 @@ TIKA_GOTENBERG_ENDPOINT = os.getenv(
 # Tika parser is now integrated into the main parser registry
 # No separate Django app needed
 
+# Marker (optional marker-pdf integration; see docs/configuration.md)
+MARKER_ENABLED = get_bool_from_env("PAPERLESS_MARKER_ENABLED", "NO")
+MARKER_EXTENDED = get_bool_from_env("PAPERLESS_MARKER_EXTENDED", "NO")
+MARKER_OFFICE = get_bool_from_env("PAPERLESS_MARKER_OFFICE", "NO")
+_marker_cfg = os.getenv("PAPERLESS_MARKER_CONFIG_JSON", "").strip()
+MARKER_CONFIG_JSON = _marker_cfg or None
+
+if MARKER_ENABLED:
+    INSTALLED_APPS.append("paperless_marker.apps.PaperlessMarkerConfig")
+
 AUDIT_LOG_ENABLED = get_bool_from_env("PAPERLESS_AUDIT_LOG_ENABLED", "true")
 if AUDIT_LOG_ENABLED:
     INSTALLED_APPS.append("auditlog")

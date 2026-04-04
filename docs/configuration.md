@@ -294,6 +294,67 @@ Docker, this may be the `environment` key of the webserver or a
 containing the configuration parameters. Be sure to use the correct format
 and watch out for indentation if editing the YAML file.
 
+### Marker (optional PDF and document extraction) {#marker}
+
+Paperless can use [Marker](https://github.com/datalab-to/marker) **inside the Celery consumer**
+to extract text (markdown-oriented layout) from PDFs and, when configured, from other formats
+Marker supports. This parser is **not** enabled by default and is **not** part of the
+standard locked dependencies: install the Python package in the same environment as
+Paperless, for example:
+
+```bash
+pip install "marker-pdf>=1.10.2,<2"
+```
+
+For Word, Excel, PowerPoint, HTML, EPUB, and related formats, install the full extra
+(`pip install "marker-pdf[full]>=1.10.2,<2"`) and enable office MIME types below.
+
+`marker-pdf` currently declares `regex<2025` while Paperless requires a newer `regex`.
+If your installer reports a conflict, install Paperless first, then install Marker, then
+force a compatible `regex`, for example:
+
+```bash
+pip install "regex>=2025.9.18"
+```
+
+When enabled, the Marker parser registers with a **higher weight** than the Tesseract,
+Tika, and remote OCR parsers, so it takes precedence for the MIME types it handles.
+
+Marker runs neural models (see upstream docs for GPU/CPU, `TORCH_DEVICE`, and VRAM).
+First use may download model weights. Review Marker’s **code** (GPL-3.0) and **model
+license** terms for your use case.
+
+Unlike the Tika integration, Marker does **not** produce a searchable PDF archive file;
+only extracted text and thumbnails are stored (the original upload is still kept).
+
+#### [`PAPERLESS_MARKER_ENABLED=<bool>`](#PAPERLESS_MARKER_ENABLED) {#PAPERLESS_MARKER_ENABLED}
+
+: Enable the in-process Marker parser.
+
+    Defaults to false.
+
+#### [`PAPERLESS_MARKER_EXTENDED=<bool>`](#PAPERLESS_MARKER_EXTENDED) {#PAPERLESS_MARKER_EXTENDED}
+
+: When enabled, Marker also registers for the same raster image MIME types as the default
+Tesseract parser (`image/jpeg`, `image/png`, and others).
+
+    Defaults to false.
+
+#### [`PAPERLESS_MARKER_OFFICE=<bool>`](#PAPERLESS_MARKER_OFFICE) {#PAPERLESS_MARKER_OFFICE}
+
+: When enabled, Marker also registers for the same “Office” MIME types as the optional
+Tika parser. Requires `marker-pdf[full]` (or equivalent dependencies) to be installed.
+
+    Defaults to false.
+
+#### [`PAPERLESS_MARKER_CONFIG_JSON=<path>`](#PAPERLESS_MARKER_CONFIG_JSON) {#PAPERLESS_MARKER_CONFIG_JSON}
+
+: Optional path to a JSON file passed to Marker’s `ConfigParser` for advanced tuning
+(processors, renderer, optional LLM service, and other options described in Marker’s CLI
+help and documentation).
+
+    Defaults to unset.
+
 ### Email Parsing
 
 #### [`PAPERLESS_EMAIL_PARSE_DEFAULT_LAYOUT=<int>`](#PAPERLESS_EMAIL_PARSE_DEFAULT_LAYOUT) {#PAPERLESS_EMAIL_PARSE_DEFAULT_LAYOUT}
