@@ -1,114 +1,109 @@
 <pngx-page-header [title]="getTitle()">
-  <div ngbDropdown class="btn-group flex-fill d-sm-none">
-    <button class="btn btn-sm btn-outline-primary" id="dropdownSelectMobile" ngbDropdownToggle>
-      <i-bs name="text-indent-left"></i-bs><div class="d-none d-sm-inline ms-1"><ng-container i18n>Select</ng-container></div>
+  <div ngbDropdown class="d-inline-block" [autoClose]="'outside'">
+    <button
+      type="button"
+      class="btn btn-sm btn-outline-primary position-relative"
+      id="documentListToolbarMenu"
+      ngbDropdownToggle
+      tourAnchor="tour.documents-views"
+      i18n-title title="Document list options"
+    >
+      <i-bs name="list"></i-bs>
       @if (list.hasSelection) {
-        <pngx-clearable-badge [selected]="list.hasSelection" [number]="list.selectedCount" (cleared)="list.selectNone()"></pngx-clearable-badge><span class="visually-hidden">selected</span>
+        <pngx-clearable-badge [selected]="list.hasSelection" [number]="list.selectedCount" (cleared)="list.selectNone()"></pngx-clearable-badge><span class="visually-hidden" i18n>selected</span>
       }
-    </button>
-    <div ngbDropdownMenu aria-labelledby="dropdownSelectMobile" class="shadow">
-      <button ngbDropdownItem (click)="list.selectNone()" i18n>Select none</button>
-      <button ngbDropdownItem (click)="list.selectPage()" i18n>Select page</button>
-      <button ngbDropdownItem (click)="list.selectAll()" i18n>Select all</button>
-    </div>
-  </div>
-  <div class="d-none d-sm-flex flex-fill me-3">
-    <div class="input-group input-group-sm">
-      <span class="input-group-text border-0" i18n>Select:</span>
-    </div>
-    <div class="btn-group btn-group-sm flex-nowrap">
-      @if (list.hasSelection) {
-        <button class="btn btn-sm btn-outline-secondary" (click)="list.selectNone()">
-          <i-bs name="slash-circle" class="me-1"></i-bs><ng-container i18n>None</ng-container>
-        </button>
-      }
-      <button class="btn btn-sm btn-outline-primary" (click)="list.selectPage()">
-        <i-bs name="file-earmark-check" class="me-1"></i-bs><ng-container i18n>Page</ng-container>
-      </button>
-      <button class="btn btn-sm btn-outline-primary" (click)="list.selectAll()">
-        <i-bs name="check-all" class="me-1"></i-bs><ng-container i18n>All</ng-container>
-      </button>
-    </div>
-  </div>
-  <div ngbDropdown class="btn-group flex-fill">
-    <button class="btn btn-sm btn-outline-primary" id="dropdownDisplayFields" ngbDropdownToggle>
-      <i-bs name="card-heading"></i-bs><div class="d-none d-sm-inline ms-1"><ng-container i18n>Show</ng-container></div>
-    </button>
-    <div ngbDropdownMenu aria-labelledby="dropdownDisplayFields" class="shadow">
-      <div class="px-3">
-        @for (field of settingsService.allDisplayFields; track field.id) {
-          <div class="form-check my-1">
-            <input class="form-check-input mt-1" type="checkbox" id="displayField{{field.id}}" [checked]="activeDisplayFields.includes(field.id)" (change)="toggleDisplayField(field.id)">
-            <label class="form-check-label" for="displayField{{field.id}}">{{field.name}}</label>
-          </div>
-        }
-      </div>
-    </div>
-  </div>
-  <div class="btn-group flex-fill" role="group">
-    <input type="radio" class="btn-check" [(ngModel)]="list.displayMode" value="table" id="displayModeDetails" name="displayModeDetails">
-    <label for="displayModeDetails" class="btn btn-outline-primary btn-sm">
-      <i-bs name="list-ul"></i-bs>
-    </label>
-    <input type="radio" class="btn-check" [(ngModel)]="list.displayMode" value="smallCards" id="displayModeSmall" name="displayModeSmall">
-    <label for="displayModeSmall" class="btn btn-outline-primary btn-sm">
-      <i-bs name="grid"></i-bs>
-    </label>
-    <input type="radio" class="btn-check" [(ngModel)]="list.displayMode" value="largeCards" id="displayModeLarge" name="displayModeLarge">
-    <label for="displayModeLarge" class="btn btn-outline-primary btn-sm">
-      <i-bs name="hdd-stack"></i-bs>
-    </label>
-  </div>
-
-  <div ngbDropdown class="btn-group flex-fill">
-    <button class="btn btn-outline-primary btn-sm" id="dropdownBasic1" ngbDropdownToggle>
-      <i-bs name="arrow-down-up"></i-bs><div class="d-none d-sm-inline ms-1"><ng-container i18n>Sort</ng-container></div>
-    </button>
-    <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="shadow dropdown-menu-right">
-      <div class="w-100 d-flex pb-2 mb-1 border-bottom">
-        <input type="radio" class="btn-check" [value]="false" [(ngModel)]="listSortReverse" id="listSortReverseFalse">
-        <label class="btn btn-outline-primary btn-sm mx-2 flex-fill" for="listSortReverseFalse">
-          <i-bs name="sort-alpha-down"></i-bs>
-        </label>
-        <input type="radio" class="btn-check" [value]="true" [(ngModel)]="listSortReverse" id="listSortReverseTrue">
-        <label class="btn btn-outline-primary btn-sm me-2 flex-fill" for="listSortReverseTrue">
-          <i-bs name="sort-alpha-up-alt"></i-bs>
-        </label>
-      </div>
-      <div>
-        @for (f of getSortFields(); track f) {
-          <button ngbDropdownItem (click)="list.sortField = f.field"
-            [class.active]="list.sortField === f.field">{{f.name}}
-          </button>
-        }
-      </div>
-    </div>
-  </div>
-
-  <div class="btn-group flex-fill" *pngxIfPermissions="{ action: PermissionAction.View, type: PermissionType.SavedView }" ngbDropdown role="group">
-    <button class="btn btn-sm btn-outline-primary dropdown-toggle flex-fill" tourAnchor="tour.documents-views" ngbDropdownToggle>
-      <i-bs name="window-stack"></i-bs><div class="d-none d-sm-inline ms-1"><ng-container i18n>Views</ng-container></div>
       @if (savedViewIsModified) {
         <div class="position-absolute top-0 start-100 p-2 translate-middle badge bg-secondary border border-light rounded-circle">
-          <span class="visually-hidden">selected</span>
+          <span class="visually-hidden" i18n>selected</span>
         </div>
       }
     </button>
-    <div class="dropdown-menu shadow dropdown-menu-right" ngbDropdownMenu>
-      @if (!list.activeSavedViewId) {
-        @for (view of savedViewService.allViews; track view) {
-          <button ngbDropdownItem (click)="loadViewConfig(view.id)">{{view.name}}</button>
+    <div ngbDropdownMenu aria-labelledby="documentListToolbarMenu" class="shadow dropdown-menu-end document-list-toolbar-panel">
+      <div class="document-list-toolbar-group border-bottom">
+        <div class="small text-muted mb-2" i18n>Select</div>
+        <div class="d-grid gap-1">
+          @if (list.hasSelection) {
+            <button type="button" class="btn btn-sm btn-outline-secondary text-start" (click)="list.selectNone()">
+              <i-bs name="slash-circle" class="me-1"></i-bs><ng-container i18n>None</ng-container>
+            </button>
+          }
+          <button type="button" class="btn btn-sm btn-outline-primary text-start" (click)="list.selectPage()">
+            <i-bs name="file-earmark-check" class="me-1"></i-bs><ng-container i18n>Page</ng-container>
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-primary text-start" (click)="list.selectAll()">
+            <i-bs name="check-all" class="me-1"></i-bs><ng-container i18n>All</ng-container>
+          </button>
+        </div>
+      </div>
+      <div class="document-list-toolbar-group border-bottom">
+        <div class="small text-muted mb-2" i18n>Show</div>
+        <div>
+          @for (field of settingsService.allDisplayFields; track field.id) {
+            <div class="form-check my-1">
+              <input class="form-check-input mt-1" type="checkbox" id="displayField{{field.id}}" [checked]="activeDisplayFields.includes(field.id)" (change)="toggleDisplayField(field.id)">
+              <label class="form-check-label" for="displayField{{field.id}}">{{field.name}}</label>
+            </div>
+          }
+        </div>
+      </div>
+      <div class="document-list-toolbar-group border-bottom">
+        <div class="small text-muted mb-2" i18n>Layout</div>
+        <div class="btn-group-vertical w-100" role="group">
+          <input type="radio" class="btn-check" [(ngModel)]="list.displayMode" value="table" id="displayModeDetails" name="displayModeDetails">
+          <label for="displayModeDetails" class="btn btn-outline-primary btn-sm">
+            <i-bs name="list-ul"></i-bs>
+          </label>
+          <input type="radio" class="btn-check" [(ngModel)]="list.displayMode" value="smallCards" id="displayModeSmall" name="displayModeSmall">
+          <label for="displayModeSmall" class="btn btn-outline-primary btn-sm">
+            <i-bs name="grid"></i-bs>
+          </label>
+          <input type="radio" class="btn-check" [(ngModel)]="list.displayMode" value="largeCards" id="displayModeLarge" name="displayModeLarge">
+          <label for="displayModeLarge" class="btn btn-outline-primary btn-sm">
+            <i-bs name="hdd-stack"></i-bs>
+          </label>
+        </div>
+      </div>
+      <div class="document-list-toolbar-group border-bottom">
+        <div class="small text-muted mb-2" i18n>Sort</div>
+        <div class="d-flex pb-2 mb-2 border-bottom">
+          <input type="radio" class="btn-check" [value]="false" [(ngModel)]="listSortReverse" id="listSortReverseFalse">
+          <label class="btn btn-outline-primary btn-sm mx-1 flex-fill" for="listSortReverseFalse">
+            <i-bs name="sort-alpha-down"></i-bs>
+          </label>
+          <input type="radio" class="btn-check" [value]="true" [(ngModel)]="listSortReverse" id="listSortReverseTrue">
+          <label class="btn btn-outline-primary btn-sm mx-1 flex-fill" for="listSortReverseTrue">
+            <i-bs name="sort-alpha-up-alt"></i-bs>
+          </label>
+        </div>
+        <div>
+          @for (f of getSortFields(); track f) {
+            <button
+              type="button"
+              ngbDropdownItem
+              (click)="list.sortField = f.field"
+              [class.active]="list.sortField === f.field"
+            >{{f.name}}</button>
+          }
+        </div>
+      </div>
+      <div class="document-list-toolbar-group" *pngxIfPermissions="{ action: PermissionAction.View, type: PermissionType.SavedView }">
+        <div class="small text-muted mb-2">
+          <i-bs name="window-stack" class="me-1"></i-bs><ng-container i18n>Views</ng-container>
+        </div>
+        @if (!list.activeSavedViewId) {
+          @for (view of savedViewService.allViews; track view) {
+            <button type="button" ngbDropdownItem (click)="loadViewConfig(view.id)">{{view.name}}</button>
+          }
+          @if (savedViewService.allViews.length > 0) {
+            <div class="dropdown-divider"></div>
+          }
         }
-        @if (savedViewService.allViews.length > 0) {
-          <div class="dropdown-divider"></div>
+        @if (list.activeSavedViewId && activeSavedViewCanChange) {
+          <button type="button" ngbDropdownItem (click)="saveViewConfig()" [disabled]="!savedViewIsModified" i18n>Save "{{list.activeSavedViewTitle}}"</button>
         }
-      }
-
-      @if (list.activeSavedViewId && activeSavedViewCanChange) {
-        <button ngbDropdownItem (click)="saveViewConfig()" [disabled]="!savedViewIsModified" i18n>Save "{{list.activeSavedViewTitle}}"</button>
-      }
-      <button ngbDropdownItem (click)="saveViewConfigAs()" *pngxIfPermissions="{ action: PermissionAction.Add, type: PermissionType.SavedView }" i18n>Save as...</button>
-      <a ngbDropdownItem routerLink="/savedviews" *pngxIfPermissions="{ action: PermissionAction.View, type: PermissionType.SavedView }" i18n>All saved views</a>
+        <button type="button" ngbDropdownItem (click)="saveViewConfigAs()" *pngxIfPermissions="{ action: PermissionAction.Add, type: PermissionType.SavedView }" i18n>Save as...</button>
+        <a ngbDropdownItem routerLink="/savedviews" *pngxIfPermissions="{ action: PermissionAction.View, type: PermissionType.SavedView }" i18n>All saved views</a>
+      </div>
     </div>
   </div>
 

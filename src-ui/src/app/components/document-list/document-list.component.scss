@@ -87,3 +87,15 @@ a {
 pngx-page-header .dropdown-menu {
   --bs-dropdown-min-width: 12em;
 }
+
+.document-list-toolbar-panel {
+  min-width: min(100vw - 2rem, 22rem);
+  max-height: min(85vh, 36rem);
+  overflow-y: auto;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.document-list-toolbar-group {
+  padding: 0.75rem 1rem 0.85rem;
+}
